@@ -5,6 +5,7 @@ from sqlalchemy import inspect
 from flask import Flask, render_template, request, jsonify
 from flask import request
 from flask import redirect, url_for, jsonify, render_template
+import os
 
 
 
@@ -269,4 +270,6 @@ def eliminar_reserva(reserva_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))  # Obtener el puerto de la variable de entorno o usar 5000
+    app.run(debug=True, host='0.0.0.0', port=port)  # Host '0.0.0.0' para que sea accesible desde fuera del contenedor
+
