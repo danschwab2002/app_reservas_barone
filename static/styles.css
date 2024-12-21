@@ -1,0 +1,18 @@
+body {
+    background-color: #f8f9fa;
+    color: #343a40;
+}
+
+h1 {
+    margin-bottom: 30px;
+}
+
+.btn {
+    margin: 5px;
+}
+
+.form-check-input {
+    vertical-align: middle; /* Alinea verticalmente */
+    margin: 20px;
+    margin-left: 5px; /* Espaciado entre el checkbox y la etiqueta */
+}

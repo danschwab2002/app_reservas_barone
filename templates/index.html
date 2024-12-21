@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Sistema de Reservas</a>
+        </div>
+    </nav>    
+    <div class="container mt-5">
+        <h1 class="text-center">Sistema de Reservas del Restaurante</h1>
+        <hr>
+        
+        <div class="container">
+
+            <h2 class="mt-5 mb-3">Reservas</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Cantidad</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Mesa</th>
+                        <th>Zona</th>
+                        <th>¿Es Evento?</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reserva in reservas %}
+                    <tr>
+                        
+                        <td>{{ reserva.id }}</td>
+                        <td>{{ reserva.nombre_cliente }}</td>
+                        <td>{{ reserva.cantidad_personas }}</td>
+                        <td>{{ reserva.fecha }}</td>
+                        <td>{{ reserva.horario }}</td>
+                        <td>{{ reserva.mesa.id }}</td>
+                        <td>{{ reserva.mesa.zona.nombre }}</td>
+                        <td>{{ "Sí" if reserva.es_evento else "No" }}</td>
+                        <!-- Botón para eliminar -->
+                        <!-- Botón para eliminar -->
+                        <!-- Botón para eliminar -->
+                        <!-- Botón para eliminar -->
+                        <td>
+                            <!-- Botón separado con comillas para evitar conflictos -->
+                            <form>
+                                <button 
+                                    type="button" 
+                                    class="btn btn-danger" 
+                                    onclick="eliminarReserva(event, '{{ reserva.id }}')">
+                                    Eliminar
+                                </button>
+                            </form>
+                        </td>
+
+                        <script>
+                            // Función para manejar la eliminación de reservas
+                            async function eliminarReserva(event, reservaId) {
+                                event.preventDefault(); // Prevenir cualquier acción predeterminada
+
+                                const url = `/reservas/${reservaId}`; // Construir la URL del endpoint
+                                try {
+                                    const response = await fetch(url, {
+                                        method: 'DELETE', // Usar el método DELETE
+                                        headers: {
+                                            'Content-Type': 'application/json', // Establecer el tipo de contenido
+                                        },
+                                    });
+
+                                    if (response.ok) {
+                                        alert('Reserva eliminada exitosamente.'); // Mostrar mensaje de éxito
+                                        location.reload(); // Recargar la página para reflejar los cambios
+                                    } else {
+                                        const errorData = await response.json();
+                                        alert(`Error al eliminar la reserva: ${errorData.error || 'Desconocido'}`);
+                                    }
+                                } catch (error) {
+                                    alert(`Ocurrió un error: ${error.message}`); // Manejar errores de red u otros
+                                }
+                            }
+                        </script>
+
+
+
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+
+            
+            <h3 class="mt-5">Agregar Nueva Reserva</h3>
+            <form method="POST" action="/reservas" class="mb-4">
+                <label for="nombre_cliente" class="form-label">Nombre del Cliente:</label>
+                <input type="text" class="form-control" id="nombre_cliente" name="nombre_cliente" required>
+            
+                <label for="cantidad_personas" class="form-label">Cantidad de Personas:</label>
+                <input type="number" class="form-control" id="cantidad_personas" name="cantidad_personas" required>
+            
+                <label for="fecha" class="form-label">Fecha:</label>
+                <input type="date" class="form-control" id="fecha" name="fecha" required>
+            
+                <label for="horario" class="form-label">Horario:</label>
+                <input type="time" class="form-control" id="horario" name="horario" required>
+            
+                <label for="mesa_id" class="form-label">Mesa ID:</label>
+                <input type="number" class="form-control" id="mesa_id" name="mesa_id" required>
+            
+                <div class="form-group">
+                    <label for="es_evento">¿Es Evento?</label>
+                    <input type="checkbox" id="es_evento" name="es_evento" class="form-check-input">
+                </div>
+                
+            
+                <button type="submit" class="btn btn-primary">Agregar Reserva</button>
+            </form>
+            
+
+            <script>
+                document.getElementById('formReserva').addEventListener('submit', function (event) {
+                    alert("Reserva enviada exitosamente."); // Mensaje informativo
+                });
+            </script>
+
+            <h2 class="mb-3">Zonas</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for zona in zonas %}
+                        <tr>
+                            <td>{{ zona.id }}</td>
+                            <td>{{ zona.nombre }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <h3 class="mt-5">Agregar Nueva Zona</h3>
+            <form action="/zonas" method="POST">
+                <div class="mb-3">
+                    <label for="nombreZona" class="form-label">Nombre de la Zona</label>
+                    <input type="text" class="form-control" id="nombreZona" name="nombre" placeholder="Ingrese el nombre de la zona" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Agregar Zona</button>
+            </form>
+
+        
+            <h2 class="mt-5 mb-3">Mesas</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Capacidad</th>
+                        <th>Zona</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mesa in mesas %}
+                        <tr>
+                            <td>{{ mesa.id }}</td>
+                            <td>{{ mesa.capacidad }}</td>
+                            <td>{{ mesa.zona.nombre if mesa.zona else 'Sin asignar' }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <h3 class="mt-5">Agregar Nueva Mesa</h3>
+            <form action="/mesas" method="POST">
+                <div class="mb-3">
+                    <label for="capacidadMesa" class="form-label">Capacidad</label>
+                         <input type="number" class="form-control" id="capacidadMesa" name="capacidad" placeholder="Ingrese la capacidad de la mesa" required>
+                </div>
+                <div class="mb-3">
+                    <label for="zonaMesa" class="form-label">Zona</label>
+                        <select class="form-select" id="zonaMesa" name="zona_id" required>
+                            {% for zona in zonas %}
+                        <option value="{{ zona.id }}">{{ zona.nombre }}</option>
+                             {% endfor %}
+                        </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Agregar Mesa</button>
+            </form>
+
+
+               
+
+            </div>
+    </div>
+</body>
+</html>
