@@ -13,8 +13,12 @@ import os
 app = Flask(__name__)
 
 # Configuración de la base de datos
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///reservas.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///reservas.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+if not app.config['SQLALCHEMY_DATABASE_URI']:
+    raise ValueError("La variable DATABASE_URL no está configurada.")
+
 
 # Inicializar la base de datos
 db = SQLAlchemy(app)
